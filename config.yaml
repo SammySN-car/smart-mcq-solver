@@ -1,0 +1,80 @@
+﻿# Smart MCQ Solver - Configuration
+# =================================
+
+# Project paths
+paths:
+  data_dir: "./data"
+  models_dir: "./models_saved"
+  output_dir: "./output"
+
+# Reproducibility
+seed: 42
+
+# Data settings
+data:
+  train_file: "train.csv"
+  test_file: "test.csv"
+  options: ["A", "B", "C", "D", "E"]
+
+# Cross-validation
+cv:
+  n_folds: 5
+
+# Model 1: TF-IDF MCQNet
+model_1:
+  name: "mcqnet"
+  word_max_features: 50000
+  word_ngram_range: [1, 2]
+  char_max_features: 15000
+  char_ngram_range: [3, 4]
+  hidden_dims: [256, 64, 1]
+  dropout: 0.3
+  batch_size: 256
+  epochs: 40
+  learning_rate: 0.001
+
+# Model 2: ELECTRA
+model_2:
+  name: "google/electra-base-discriminator"
+  max_length: 256
+  batch_size: 8
+  epochs: 6
+  learning_rate: 0.00001
+  weight_decay: 0.01
+  decay_rate: 0.9
+  n_dropout_heads: 5
+  dropout_rate: 0.2
+  accumulation_steps: 4
+
+# Model 3: MiniLM
+model_3:
+  name: "microsoft/MiniLM-L12-H384-uncased"
+  max_length: 128
+  batch_size: 8
+  epochs: 3
+  learning_rate: 0.00002
+  weight_decay: 0.01
+  n_folds: 3
+
+# Model 4: Qwen RAG
+model_4:
+  name: "Qwen/Qwen2.5-7B-Instruct"
+  use_qlora: true
+  lora_r: 8
+  lora_alpha: 16
+  lora_dropout: 0.05
+  max_length: 512
+  quantization: "nf4"
+
+# RAG settings
+rag:
+  max_articles: 50000
+  chunk_size: 200
+  chunk_overlap: 40
+  max_features: 80000
+  svd_dim: 256
+  top_k: 3
+
+# Ensemble weights (equal)
+ensemble:
+  weights: [0.25, 0.25, 0.25, 0.25]
