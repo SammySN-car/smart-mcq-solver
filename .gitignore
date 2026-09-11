@@ -1,4 +1,4 @@
-﻿# Python
+# Python
 __pycache__/
 *.py[cod]
 *.class
@@ -38,9 +38,6 @@ ENV/
 .env
 
 # Data (too large for git)
-data/
-*.csv
-*.parquet
 
 # Models (too large for git)
 models_saved/
