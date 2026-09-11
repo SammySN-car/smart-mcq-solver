@@ -1,4 +1,4 @@
-﻿# Smart MCQ Solver
+# Smart MCQ Solver
 
 An ensemble machine learning system for solving 5-option Multiple Choice Questions (MCQ) on scientific topics.
 
@@ -38,7 +38,7 @@ MAP@3 measures the average precision of the top-3 predicted answers across all q
 
 **1. MCQNet (25%)**
 - Dual n-gram features: word (1,2) 50K + char (3,4) 15K = 65K dims
-- 3-layer MLP: input_dim → 256 → 64 → 1 (with BatchNorm + Dropout)
+- 3-layer MLP: input_dim -> 256 -> 64 -> 1 (with BatchNorm + Dropout)
 - 5-Fold Stratified Cross-Validation
 - Linear warmup scheduler
 
@@ -56,47 +56,44 @@ MAP@3 measures the average precision of the top-3 predicted answers across all q
 
 **4. Qwen RAG (25%)**
 - Wikipedia FAISS index for retrieval (50K articles, chunked)
-- TF-IDF → TruncatedSVD (256-dim) → FAISS IndexFlatIP
+- TF-IDF -> TruncatedSVD (256-dim) -> FAISS IndexFlatIP
 - 4-bit NF4 quantization with LoRA adapters (r=8, alpha=16)
 - Generative scoring via next-token prediction loss
 
 ## Project Structure
 
-`
-smart_mcq_solver/
-├── config.yaml              # All hyperparameters
-├── requirements.txt         # Dependencies
-├── main.py                  # Entry point
-└── src/
-    ├── utils.py             # set_seed, mapk, normalize_matrix
-    ├── data.py              # load_data, clean_data, create_tfidf_features
-    ├── ensemble.py          # ensemble_predictions, create_submission
-    └── models/
-        ├── mcqnet.py        # TF-IDF Neural Network
-        ├── electra.py       # ELECTRA + LLRD + Multi-Sample Dropout
-        ├── minilm.py        # MiniLM Bi-Encoder
-        └── rag.py           # Wikipedia RAG with Qwen
-`
-
+\smart_mcq_solver/
++-- config.yaml              # All hyperparameters
++-- requirements.txt         # Dependencies
++-- main.py                  # Entry point
++-- src/
+    +-- utils.py             # set_seed, mapk, normalize_matrix
+    +-- data.py              # load_data, clean_data, create_tfidf_features
+    +-- ensemble.py          # ensemble_predictions, create_submission
+    +-- models/
+        +-- mcqnet.py        # TF-IDF Neural Network
+        +-- electra.py       # ELECTRA + LLRD + Multi-Sample Dropout
+        +-- minilm.py        # MiniLM Bi-Encoder
+        +-- rag.py           # Wikipedia RAG with Qwen
+\
 ## Installation
 
-`ash
+\\ash
 git clone https://github.com/SammySN-car/smart-mcq-solver.git
 cd smart-mcq-solver
 pip install -r requirements.txt
-`
-
+\
 ## Usage
 
-`ash
+\\ash
 python main.py --data_dir ./data --output_dir ./output
-`
-
+\
 ### Required Data Files
 
 Place these in your data directory:
-- 	rain.csv - Training data with columns: id, prompt, A, B, C, D, E, answer
-- 	est.csv - Test data with columns: id, prompt, A, B, C, D, E
+
+- train.csv - Training data with columns: id, prompt, A, B, C, D, E, answer
+- test.csv - Test data with columns: id, prompt, A, B, C, D, E
 
 ## Key Findings
 
