@@ -35,7 +35,7 @@ model_1:
 
 # Model 2: ELECTRA
 model_2:
-  name: "google/electra-base-discriminator"
+  model_name: "google/electra-base-discriminator"
   max_length: 256
   batch_size: 8
   epochs: 6
@@ -48,7 +48,7 @@ model_2:
 
 # Model 3: MiniLM
 model_3:
-  name: "microsoft/MiniLM-L12-H384-uncased"
+  model_name: "microsoft/MiniLM-L12-H384-uncased"
   max_length: 128
   batch_size: 8
   epochs: 3
@@ -58,7 +58,7 @@ model_3:
 
 # Model 4: Qwen RAG
 model_4:
-  name: "Qwen/Qwen2.5-7B-Instruct"
+  model_name: "Qwen/Qwen2.5-7B-Instruct"
   use_qlora: true
   lora_r: 8
   lora_alpha: 16
