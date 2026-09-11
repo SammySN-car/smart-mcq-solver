@@ -1,105 +1,81 @@
 ﻿# Smart MCQ Solver
 
-An ensemble machine learning and Retrieval-Augmented Generation (RAG) system for solving Multiple Choice Questions (MCQ).
+An ensemble machine learning system for solving Multiple Choice Questions (MCQ) on the Kaggle "Smart MCQ Solver Challenge".
+
+**Best Public Leaderboard Score: MAP@3 = 0.76724**
+
+## Problem
+
+Given a scientific prompt and 5 candidate options (A-E), predict the top-3 most probable correct answers. Evaluated via Mean Average Precision at 3 (MAP@3).
+
+**Dataset:** 2,000 training samples, 500 test samples across physics, biology, chemistry, astrophysics, and immunology.
 
 ## Architecture
 
-This system combines 4 models with equal 25% weights:
+| Model | Type | MAP@3 | Weight |
+|-------|------|-------|--------|
+| **ELECTRA-base** | Pretrained Transformer | ~0.76 | 44.1% |
+| **TF-IDF NN** | Custom Neural Network | ~0.72 | 44.1% |
+| **MiniLM-L12** | Bi-Encoder | ~0.73 | 9.8% |
+| **Length Prior** | EDA-based Bias | - | 2.0% |
 
-| Model | Description | Weight |
-|-------|-------------|--------|
-| **MCQNet** | Custom TF-IDF Neural Network with BatchNorm and Dropout | 25% |
-| **ELECTRA** | Primary Contextual Discriminator with LLRD and Multi-Sample Dropout | 25% |
-| **MiniLM** | Compact Bi-Encoder using [CLS] token classification | 25% |
-| **Qwen RAG** | QLoRA 4-Bit Quantized RAG with Wikipedia FAISS Index | 25% |
+### Model Details
+
+**1. ELECTRA-base (44.1%)**
+- 5-Fold Stratified Cross-Validation
+- Mean Pooling + Multi-Sample Dropout (5 heads)
+- Layer-wise Learning Rate Decay (LLRD, gamma=0.9)
+
+**2. TF-IDF Neural Network (44.1%)**
+- Dual n-gram features: word (1,2) 50K + char (3,4) 15K = 65K dims
+- 2-layer MLP with BatchNorm and Dropout
+
+**3. MiniLM-L12 Bi-Encoder (9.8%)**
+- 384-dimensional hidden representation
+- [CLS] token classification head
+- Architectural diversity for ensemble
+
+**4. Option Length Prior (2.0%)**
+- Discovered via EDA: 40.55% of correct answers are longest option
 
 ## Project Structure
 
 `
 smart_mcq_solver/
-├── config.yaml                 # Configuration file
-├── requirements.txt            # Python dependencies
-├── main.py                     # Main entry point
-├── src/
-│   ├── __init__.py
-│   ├── utils.py                # Utility functions
-│   ├── data.py                 # Data loading and preprocessing
-│   ├── ensemble.py             # Ensemble logic
-│   └── models/
-│       ├── __init__.py
-│       ├── mcqnet.py           # Model 1: TF-IDF MCQNet
-│       ├── electra.py          # Model 2: ELECTRA
-│       ├── minilm.py           # Model 3: MiniLM
-│       └── rag.py              # Model 4: Qwen RAG
-├── data/                       # Data directory (not in git)
-├── models_saved/               # Saved model weights (not in git)
-├── notebooks/                  # Jupyter notebooks
-├── reports/                    # PDF reports
-└── streamlit_deployment/       # Streamlit web app
+├── config.yaml              # All hyperparameters
+├── requirements.txt         # Dependencies
+├── main.py                  # Entry point
+└── src/
+    ├── utils.py             # set_seed, mapk, normalize_matrix
+    ├── data.py              # load_data, clean_data, create_tfidf_features
+    ├── ensemble.py          # ensemble_predictions, create_submission
+    └── models/
+        ├── mcqnet.py        # TF-IDF Neural Network
+        ├── electra.py       # ELECTRA + LLRD + Multi-Sample Dropout
+        ├── minilm.py        # MiniLM Bi-Encoder
+        └── rag.py           # Wikipedia RAG with Qwen
 `
 
 ## Installation
 
-1. Clone the repository:
 `ash
-git clone <repository-url>
-cd smart_mcq_solver
-`
-
-2. Create a virtual environment:
-`ash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-`
-
-3. Install dependencies:
-`ash
+git clone https://github.com/SammySN-car/smart-mcq-solver.git
+cd smart-mcq-solver
 pip install -r requirements.txt
 `
 
 ## Usage
 
-### Training
-
 `ash
-python main.py --config config.yaml
+python main.py --data_dir ./data --output_dir ./output
 `
 
-With custom paths:
-`ash
-python main.py --data_dir /path/to/data --output_dir /path/to/output
-`
+## Key Findings
 
-### Configuration
-
-Edit config.yaml to customize:
-- Model hyperparameters
-- Cross-validation settings
-- RAG configuration
-- Ensemble weights
-
-## Data
-
-Place your data files in the data/ directory:
-- 	rain.csv - Training data with columns: id, prompt, A, B, C, D, E, answer
-- 	est.csv - Test data with columns: id, prompt, A, B, C, D, E
-
-## Streamlit App
-
-To run the Streamlit web app:
-`ash
-cd streamlit_deployment
-pip install -r requirements.txt
-streamlit run app.py
-`
-
-## Results
-
-The ensemble achieves strong performance on the MCQ solving task by leveraging:
-- **TF-IDF features** for keyword matching
-- **ELECTRA** for deep contextual understanding
-- **MiniLM** for efficient sentence embeddings
-- **RAG** for retrieval-augmented generation with Wikipedia
+- **LLRD** prevented catastrophic forgetting during fine-tuning
+- **Multi-Sample Dropout** provided +0.008 MAP@3 improvement
+- **Gradient Accumulation** enabled training with batch_size=8 on limited GPU
+- **Option Length Bias** (40.55%) was the most impactful EDA discovery
 
 ## License
 

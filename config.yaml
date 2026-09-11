@@ -75,6 +75,7 @@ rag:
   svd_dim: 256
   top_k: 3
 
-# Ensemble weights (equal)
+# Ensemble weights (optimized from experiments)
+# ELECTRA (44.1%) + TF-IDF NN (44.1%) + MiniLM (9.8%) + RAG (2.0%)
 ensemble:
-  weights: [0.25, 0.25, 0.25, 0.25]
+  weights: [0.441, 0.441, 0.098, 0.020]
