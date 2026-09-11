@@ -18,10 +18,7 @@ The **Smart MCQ Solver Challenge** is a Kaggle competition that challenges parti
 
 ### MAP@3 Metric
 
-MAP@3 measures the average precision of the top-3 predicted answers across all questions. It rewards models that place the correct answer higher in their top-3 predictions. For example:
-- If correct answer is ranked 1st: Precision@3 = 1.00
-- If correct answer is ranked 2nd: Precision@3 = 0.50
-- If correct answer is ranked 3rd: Precision@3 = 0.33
+MAP@3 measures the average precision of the top-3 predicted answers across all questions.
 
 ## Architecture
 
@@ -38,59 +35,52 @@ MAP@3 measures the average precision of the top-3 predicted answers across all q
 
 **1. MCQNet (25%)**
 - Dual n-gram features: word (1,2) 50K + char (3,4) 15K = 65K dims
-- 3-layer MLP: input_dim -> 256 -> 64 -> 1 (with BatchNorm + Dropout)
-- 5-Fold Stratified Cross-Validation
-- Linear warmup scheduler
+- 3-layer MLP: input_dim -> 256 -> 64 -> 1
 
 **2. ELECTRA-base (25%)**
 - 5-Fold Stratified Cross-Validation
 - Mean Pooling + Multi-Sample Dropout (5 heads, p=0.2)
-- Layer-wise Learning Rate Decay (LLRD, gamma=0.9)
-- Gradient accumulation (4 steps) for effective batch size 32
+- LLRD (gamma=0.9)
 
 **3. MiniLM-L12 Bi-Encoder (25%)**
 - 384-dimensional hidden representation
 - [CLS] token classification head
-- 3-Fold Cross-Validation
-- Sequence length: 128 tokens
 
 **4. Qwen RAG (25%)**
 - Wikipedia FAISS index for retrieval (50K articles, chunked)
-- TF-IDF -> TruncatedSVD (256-dim) -> FAISS IndexFlatIP
-- 4-bit NF4 quantization with LoRA adapters (r=8, alpha=16)
-- Generative scoring via next-token prediction loss
+- 4-bit NF4 quantization with LoRA adapters
 
 ## Project Structure
 
-\smart_mcq_solver/
-+-- config.yaml              # All hyperparameters
-+-- requirements.txt         # Dependencies
-+-- main.py                  # Entry point
-+-- src/
-    +-- utils.py             # set_seed, mapk, normalize_matrix
-    +-- data.py              # load_data, clean_data, create_tfidf_features
-    +-- ensemble.py          # ensemble_predictions, create_submission
-    +-- models/
-        +-- mcqnet.py        # TF-IDF Neural Network
-        +-- electra.py       # ELECTRA + LLRD + Multi-Sample Dropout
-        +-- minilm.py        # MiniLM Bi-Encoder
-        +-- rag.py           # Wikipedia RAG with Qwen
-\
+    smart_mcq_solver/
+    |-- config.yaml
+    |-- requirements.txt
+    |-- main.py
+    |-- src/
+        |-- utils.py
+        |-- data.py
+        |-- ensemble.py
+        |-- models/
+            |-- mcqnet.py
+            |-- electra.py
+            |-- minilm.py
+            |-- rag.py
+
 ## Installation
 
-\\ash
+```bash
 git clone https://github.com/SammySN-car/smart-mcq-solver.git
 cd smart-mcq-solver
 pip install -r requirements.txt
-\
+```
+
 ## Usage
 
-\\ash
+```bash
 python main.py --data_dir ./data --output_dir ./output
-\
-### Required Data Files
+```
 
-Place these in your data directory:
+### Required Data Files
 
 - train.csv - Training data with columns: id, prompt, A, B, C, D, E, answer
 - test.csv - Test data with columns: id, prompt, A, B, C, D, E
@@ -100,8 +90,7 @@ Place these in your data directory:
 - **LLRD** prevented catastrophic forgetting during fine-tuning
 - **Multi-Sample Dropout** provided +0.008 MAP@3 improvement
 - **Gradient Accumulation** enabled training with batch_size=8 on limited GPU
-- **RAG** with Wikipedia provides retrieval-augmented context for scientific questions
-- **Ensemble diversity** across TF-IDF, transformer, and generative models improves robustness
+- **RAG** with Wikipedia provides retrieval-augmented context
 
 ## License
 
