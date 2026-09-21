@@ -55,7 +55,7 @@ class MiniLMModel(nn.Module):
 
 
 def train_minilm(train, test, options, model_name, config, device, n_folds=3):
-    seed = config.get('seed', 42)
+    seed = config.get('seed', 1)
     batch_size = config.get('batch_size', 8)
     epochs = config.get('epochs', 3)
 
@@ -154,6 +154,7 @@ def train_minilm(train, test, options, model_name, config, device, n_folds=3):
         clear_vram(['model_3', 'opt3', 'scheduler_3', 'train_dataset', 'val_dataset', 'test_dataset'])
 
     return train_minilm_oof, test_minilm_matrix
+
 
 
 
