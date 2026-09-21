@@ -147,10 +147,11 @@ def train_minilm(train, test, options, model_name, config, device, n_folds=3):
                 input_ids, attention_mask = batch
                 test_preds.append(model_3(input_ids.to(device), attention_mask.to(device)).cpu().numpy())
 
-        test_minilm_matrix += np.concatenate(test_preds, axis=0) / 3.0
+        test_minilm_matrix += np.concatenate(test_preds, axis=0) / float(n_folds)
 
         print(f"Model 3 (MiniLM) Fold {fold+1}/3 Best MAP@3: {best_map3:.4f}")
 
         clear_vram(['model_3', 'opt3', 'scheduler_3', 'train_dataset', 'val_dataset', 'test_dataset'])
 
     return train_minilm_oof, test_minilm_matrix
+
