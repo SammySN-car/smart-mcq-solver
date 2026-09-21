@@ -43,7 +43,7 @@ def main():
     n_train, n_test = len(train), len(test)
     print(f"Train size: {n_train}, Test size: {n_test}")
 
-    model_name_1 = config['model_1']['model_name']
+    model_name_1 = config['model_1'].get('name', 'mcqnet')
     model_name_2 = config['model_2']['model_name']
     model_name_3 = config['model_3']['model_name']
     model_name_4 = config['model_4']['model_name']
@@ -95,3 +95,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
