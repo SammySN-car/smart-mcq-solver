@@ -19,7 +19,7 @@ def clean_text_artifact(text, is_option=False, opt_letter=None):
 
     replacements = {
         '\u201c': '"', '\u201d': '"', '\u2018': "'", '\u2019': "'",
-        '\u2014': '-', '\u2013': '-', '\\xa0': ' '
+        '\u2014': '-', '\u2013': '-', '\xa0': ' '
     }
     for old, new in replacements.items():
         text = text.replace(old, new)

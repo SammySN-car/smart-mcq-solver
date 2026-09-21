@@ -242,7 +242,6 @@ def train_qwen_rag(train, test, options, model_name, model_config, rag_config, d
             q_model = None
 
     if q_model is None:
-        from transformers import AutoModelForCausalLM
         q_model = AutoModelForCausalLM.from_pretrained(
             model_name, trust_remote_code=True, torch_dtype=torch.float16
         ).to(device)
@@ -281,4 +280,5 @@ def train_qwen_rag(train, test, options, model_name, model_config, rag_config, d
         print("Wikipedia index freed from memory.")
 
     return test_rag_matrix
+
 
