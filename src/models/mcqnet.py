@@ -1,6 +1,5 @@
 ﻿import numpy as np
 import torch
-import numpy as np
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import StratifiedKFold
@@ -153,4 +152,5 @@ def train_mcqnet(train, test, options, config, device, data_dir, n_folds=5):
         clear_vram(['model_1', 'opt1', 'scheduler_1', 'train_dataset', 'val_dataset', 'test_dataset'])
 
     return train_tfidf_oof, test_tfidf_matrix
+
 

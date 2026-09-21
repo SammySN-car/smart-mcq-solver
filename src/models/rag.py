@@ -208,9 +208,10 @@ def train_qwen_rag(train, test, options, model_name, model_config, rag_config, d
 
     print("--- Running QLoRA 4-Bit Adapter-Tuned Wikipedia RAG Scoring with Qwen2.5-7B-Instruct ---")
 
+    from transformers import AutoTokenizer, AutoModelForCausalLM
     try:
         from peft import LoraConfig, get_peft_model, TaskType
-        from transformers import BitsAndBytesConfig, AutoTokenizer, AutoModelForCausalLM
+        from transformers import BitsAndBytesConfig
         has_peft = True
     except ImportError:
         has_peft = False
@@ -280,3 +281,4 @@ def train_qwen_rag(train, test, options, model_name, model_config, rag_config, d
         print("Wikipedia index freed from memory.")
 
     return test_rag_matrix
+
