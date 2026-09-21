@@ -11,8 +11,8 @@ def ensemble_predictions(test_tfidf_matrix, test_electra_matrix, test_minilm_mat
     test_rag_norm = normalize_matrix(test_rag_matrix)
 
     test_combined = (
-        weights[0] * test_electra_norm +
-        weights[1] * test_tfidf_norm +
+        weights[0] * test_tfidf_norm +
+        weights[1] * test_electra_norm +
         weights[2] * test_minilm_norm +
         weights[3] * test_rag_norm
     )
@@ -34,3 +34,4 @@ def create_submission(test_df, predictions, output_path='submission.csv'):
     print(f"Total rows: {len(sub)}")
 
     return sub
+
