@@ -94,4 +94,4 @@ python main.py --data_dir ./data --output_dir ./output
 
 ## License
 
-MIT License
+The project is governed by the MIT License. This license defines the legal terms under which the software is provided. It grants broad permissions for use and modification of the code.
